@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>formatter.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="FlexTable.html">FlexTable</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#appendRow">appendRow</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#appendRows">appendRows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#clone">clone</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#format">format</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#modifyRows">modifyRows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#setColumn">setColumn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#setColumns">setColumns</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#setRow">setRow</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="FlexTable.html#sort">sort</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-flextable.html">flextable</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-flextable_formatter.html">flextable/formatter</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-flextable_sorter.html">flextable/sorter</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">formatter.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file FlexTable formatter.
+ * @author nozalr &lt;nozalr@group4layers.com> (Group4Layers®).
+ * @copyright 2017 nozalr (Group4Layers®).
+ * @license MIT
+ * @version 0.3.0
+ */
+
+const defFmt = {
+  header: '%-s',
+  float: '%f',
+  integer: '%d',
+  string: '%-s',
+};
+
+function applyFmt(value, fmt, isHeader, i){
+  let ret = { };
+  let isString = typeof value === 'string';
+  let isNumber = typeof value === 'number';
+  let fmtcol = fmt.columns &amp;&amp; fmt.columns[i];
+  let nvalue = value;
+  let lfmt;
+  if (isHeader &amp;&amp; isString &amp;&amp; fmt.header){
+    lfmt = fmt.header;
+  }else if (isString &amp;&amp; fmt.string){
+    lfmt = fmt.string;
+  }else if (isNumber &amp;&amp; Number.isInteger(value) &amp;&amp; fmt.integer){
+    nvalue = String(value);
+  }else if (isNumber &amp;&amp; fmt.float){
+    lfmt = fmt.float;
+    if (lfmt.decimal != null){
+      nvalue = value.toFixed(lfmt.decimal);
+    }else{
+      nvalue = String(value);
+    }
+  }else{
+    nvalue = String(value);
+  }
+
+  if (!isHeader &amp;&amp; fmtcol){ // only for values
+    lfmt = fmtcol;
+  }
+
+  if (lfmt &amp;&amp; lfmt.decimal != null){
+    nvalue = value.toFixed(lfmt.decimal);
+  }
+  if (lfmt &amp;&amp; lfmt.left){
+    ret.padLeft = false;
+  }else{
+    ret.padLeft = true;
+  }
+  ret.value = nvalue;
+  return ret;
+}
+
+function pad(pad, str, padLeft) {
+  if (typeof str === 'undefined')
+    return pad;
+  if (padLeft) {
+    return (pad + str).slice(-pad.length);
+  } else {
+    return (str + pad).substring(0, pad.length);
+  }
+}
+
+function parseFmtf(fmtf){
+  let ret;
+  if (!fmtf){
+    return null;
+  }
+  let m = fmtf.match(/%(-)?(\.(\d?))?(s|d|f)/);
+  if (m){
+    ret = {};
+    if (m[1]){
+      ret.left = true;
+    }
+    let t = m[4];
+    if (t !== 's'){
+      if (m[3]){
+        ret.decimal = Number(m[3]);
+      }else if (m[2]){ // no decimal
+        ret.decimal = 0;
+      }
+    }
+  }
+  return ret;
+}
+
+function parseFmt(fmt){
+  if (fmt == null){
+    fmt = {};
+  }
+  if (Array.isArray(fmt)){ // columns
+    fmt = { columns: fmt };
+  }
+  for (let k in defFmt){
+    if (!fmt[k]){
+      fmt[k] = defFmt[k];
+    }
+  }
+  let nfmt = {};
+  for (let k in fmt){
+    let v = fmt[k];
+    if (v){
+      if (k === 'columns'){
+        let ncols = [];
+        for (let col of v){
+          let ncol = parseFmtf(col);
+          ncols.push(ncol);
+        }
+        nfmt.columns = ncols;
+      }else{
+        nfmt[k] = parseFmtf(v);
+      }
+    }
+  }
+  return nfmt;
+}
+
+function measureLengthsMarkdown(table, fmt){
+  let lengths = Array(table._hlength);
+  let i=0;
+  let headers = table.headers;
+  for (let col of headers){
+    let value = col;
+    if (value.indexOf('|') >= 0){
+      value = value.replace(/\|/g, '&amp;#124;');
+    }
+    lengths[i] = value.length;
+    i++;
+  }
+
+  let values = table.values;
+  for (let row of values){
+    let i=0;
+    for (let col of row){
+      let fmtd = applyFmt(col, fmt, false, i);
+      let value = fmtd.value;
+      if (value.indexOf('|') >= 0){
+        value = value.replace(/\|/g, '&amp;#124;');
+      }
+      if (value.length > lengths[i]){
+        lengths[i] = value.length;
+      }
+      i++;
+    }
+  }
+  return lengths;
+}
+
+function printTableMarkdown(table, fmt){
+  let lengths = measureLengthsMarkdown(table, fmt);
+
+  let outLines = []; // '\n'
+  let outLine = []; // ''
+
+  let str = [];
+  let hl = [];
+
+  let sep = '|';
+  let space = ' ';
+  let line = '-';
+
+  // print
+  str.push(sep);
+  let i=0;
+  let headers = table.headers;
+  for (let col of headers){
+    let v = lengths[i];
+    let fmtd = applyFmt(col, fmt, true, i);
+    let value = fmtd.value;
+    if (value.indexOf('|') >= 0){
+      value = value.replace(/\|/g, '&amp;#124;');
+    }
+    let colStr = pad(Array(v + 1).join(' '), value, fmtd.padLeft);
+    str.push(colStr);
+    str.push(sep);
+    hl.push(Array(v + 3).join(line));
+    i++;
+  }
+  outLines.push(str.join(space));
+  outLine.push(sep);
+  outLine.push(hl.join(sep));
+  outLine.push(sep);
+  outLines.push(outLine.join(''));
+
+  let values = table.values;
+  for (let row of values){
+    // outLine = [];
+    str = [];
+    str.push(sep);
+    let i=0;
+    for (let col of row){
+      let v = lengths[i];
+      let fmtd = applyFmt(col, fmt, false, i);
+      let value = fmtd.value;
+      if (value.indexOf('|') >= 0){
+        value = value.replace(/\|/g, '&amp;#124;');
+      }
+      value = pad(Array(v + 1).join(space), value, fmtd.padLeft);
+      str.push(value);
+      str.push(sep);
+      i++;
+    }
+    outLines.push(str.join(space));
+  }
+
+  return outLines.join('\n') + '\n';
+}
+
+function printTableCSV(table, fmt){
+  let outLines = []; // '\n'
+
+  let str = [];
+
+  let sep = ',';
+  let space = '';
+  let comm = '#';
+  let esc = '"';
+
+  let i=0;
+  let headers = table.headers;
+  for (let col of headers){
+    let fmtd = applyFmt(col, fmt, true, i);
+    let value = fmtd.value;
+    if (value.indexOf(sep) >= 0){
+      value = `${esc}${value}${esc}`;
+    }
+    str.push(value);
+    str.push(sep);
+    i++;
+  }
+  if (i > 0){
+    str.splice(0, 0, comm);
+    str.pop();
+  }
+  outLines.push(str.join(space));
+
+  let values = table.values;
+  for (let row of values){
+    // outLine = [];
+    str = [];
+    let i=0;
+    for (let col of row){
+      let fmtd = applyFmt(col, fmt, false, i);
+      let value = fmtd.value;
+      if (value.indexOf(sep) >= 0){
+        value = `${esc}${value}${esc}`;
+      }
+      str.push(value);
+      str.push(sep);
+      i++;
+    }
+    if (i > 0){
+      str.pop();
+    }
+    outLines.push(str.join(space));
+  }
+
+  return outLines.join('\n') + '\n';
+}
+
+/**
+ * FlexTable formatter module.
+ * @module flextable/formatter
+ */
+module.exports = {
+  parseFmt,
+  printTableMarkdown,
+  printTableCSV,
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
