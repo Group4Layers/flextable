@@ -4,7 +4,7 @@
 
 FlexTable (flextablejs) is a JavaScript library that provides a class with a simple API to work with tables (headers, rows, columns, sort, format) facilitating the analysis and data manipulation.
 
-Online tools: [![Build Status](https://travis-ci.org/Group4Layers/flextable.svg?branch=master)](https://travis-ci.org/Group4Layers/flextable) [![Coverage Status](https://coveralls.io/repos/github/Group4Layers/flextable/badge.svg?branch=master)](https://coveralls.io/github/Group4Layers/flextable?branch=master) [![Ebert](https://ebertapp.io/github/Group4Layers/flextable.svg)](https://ebertapp.io/github/Group4Layers/flextable) [![Inline Docs](https://inch-ci.org/github/Group4Layers/flextable.svg)](https://inch-ci.org/github/Group4Layers/flextable)
+Online tools: [![Build Status](https://travis-ci.org/Group4Layers/flextable.svg?branch=master)](https://travis-ci.org/Group4Layers/flextable) [![Coverage Status](https://coveralls.io/repos/github/Group4Layers/flextable/badge.svg?branch=master)](https://coveralls.io/github/Group4Layers/flextable?branch=master) [![SourceLevel](https://app.sourcelevel.io/github/Group4Layers/-/flextable.svg)](https://app.sourcelevel.io/github/Group4Layers/-/flextable) [![Inline Docs](https://inch-ci.org/github/Group4Layers/flextable.svg)](https://inch-ci.org/github/Group4Layers/flextable)
 
 This library is commonly used with [CSV Types](https://github.com/Group4Layers/csv-types-js) to parse text files with fields delimited by a character (like CSV). FlexTable is compatible with the data structure produced by CSV Types. Every values-headers definition can be converted to a FlexTable. If the CSV file follow the types specs, multiple tables can be created from a single CSV file.
 

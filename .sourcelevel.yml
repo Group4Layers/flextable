@@ -13,3 +13,4 @@ exclude_paths:
 - coverage
 - node_modules
 - .nyc_output
+- **/*.md
