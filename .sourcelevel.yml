@@ -1,5 +1,5 @@
 ---
-styleguide: plataformatec/linters
+styleguide: sourcelevel/linters
 engines:
   fixme:
     enabled: true
